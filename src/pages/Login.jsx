@@ -1,14 +1,16 @@
-import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { RxEyeClosed, RxEyeOpen } from "react-icons/rx";
 import GoogleLogin from "./GoogleLogin";
 import { useState } from "react";
+import useAuth from "../hooks/useAuth";
+import Swal from "sweetalert2";
 
 const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  // const { logIn } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
 
   return (
     <div
@@ -42,7 +44,7 @@ const Login = () => {
           <div className="w-full lg:w-1/2 px-12 py-12">
             <h1 className="text-3xl mb-2 font-bold">Login</h1>
             <p className="font-thin ">Streamline Your Inventory - Join Today</p>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form>
               <div className="form-control w-full">
                 <label className="label">
                   <span className="label-text font-semibold">Email</span>
@@ -50,39 +52,19 @@ const Login = () => {
                 <input
                   type="email"
                   placeholder="Email"
-                  defaultValue="brainytitans@gmail.com"
                   className="input input-bordered w-full"
                   name="email"
-                  {...register("email", { required: true })}
                 />
-                {errors.email && (
-                  <span className="text-red-500">Email is required</span>
-                )}
               </div>
               <div className="form-control w-full relative">
                 <label className="label">
                   <span className="label-text font-semibold">Password</span>
                 </label>
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   placeholder="Password"
-                  defaultValue="123456"
                   className="input input-bordered w-full"
-                  {...register("password", { required: true })}
                 />
-                {errors.password && (
-                  <span className="text-red-500">Password is required</span>
-                )}
-                <div
-                  className="absolute right-2 top-12 cursor-pointer"
-                  onClick={togglePasswordVisibility}
-                >
-                  {showPassword ? (
-                    <RxEyeOpen className="h-5 w-5" />
-                  ) : (
-                    <RxEyeClosed className="h-5 w-5" />
-                  )}
-                </div>
               </div>
               <div className="label font-semibold">
                 Don&apos;t have an account?
