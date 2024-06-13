@@ -1,9 +1,18 @@
+import { Outlet } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+
 const DashboardLayout = () => {
+  const { logOut } = useAuth();
+
+  const handleLogout = async () => {
+    await logOut();
+  };
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col items-center justify-center">
-        {/* Page content here */}
+        <Outlet />
         <label
           htmlFor="my-drawer-2"
           className="btn btn-primary drawer-button lg:hidden"
@@ -24,6 +33,11 @@ const DashboardLayout = () => {
           </li>
           <li>
             <a>Sidebar Item 2</a>
+          </li>
+          <li>
+            <button onClick={handleLogout}>
+              Logout
+            </button>
           </li>
         </ul>
       </div>

@@ -1,16 +1,32 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { RxEyeClosed, RxEyeOpen } from "react-icons/rx";
 import GoogleLogin from "./GoogleLogin";
-import { useState } from "react";
+import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
-import Swal from "sweetalert2";
 
 const Login = () => {
-  // const { logIn } = useAuth();
+  const { logIn, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/dashboard";
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
+
+    console.log(email, password);
+
+    await logIn(email, password);
+  };
+
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, from, navigate]);
 
   return (
     <div
@@ -44,7 +60,7 @@ const Login = () => {
           <div className="w-full lg:w-1/2 px-12 py-12">
             <h1 className="text-3xl mb-2 font-bold">Login</h1>
             <p className="font-thin ">Streamline Your Inventory - Join Today</p>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="form-control w-full">
                 <label className="label">
                   <span className="label-text font-semibold">Email</span>
@@ -54,6 +70,7 @@ const Login = () => {
                   placeholder="Email"
                   className="input input-bordered w-full"
                   name="email"
+                  required
                 />
               </div>
               <div className="form-control w-full relative">
@@ -63,6 +80,8 @@ const Login = () => {
                 <input
                   type="password"
                   placeholder="Password"
+                  name="password"
+                  required
                   className="input input-bordered w-full"
                 />
               </div>
@@ -73,9 +92,11 @@ const Login = () => {
                 </Link>
               </div>
               <div className="mt-2">
-                <button className="btn w-full bg-gradient-to-r from-gray-700 via-gray-900 to-black rounded-md text-white text-center font-semibold">
-                  Login
-                </button>
+                <input
+                  className="btn w-full bg-gradient-to-r from-gray-700 via-gray-900 to-black rounded-md text-white text-center font-semibold"
+                  type="submit"
+                  value="Login"
+                />
               </div>
               <div className="divider mt-3 mb-3 font-semibold">OR</div>
             </form>

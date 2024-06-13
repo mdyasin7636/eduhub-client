@@ -1,14 +1,55 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import GoogleLogin from "./GoogleLogin";
-import { RxEyeClosed, RxEyeOpen } from "react-icons/rx";
-import { useForm } from "react-hook-form";
 import { useState } from "react";
 import useAuth from "../hooks/useAuth";
-import Swal from "sweetalert2";
 
 const Register = () => {
-  //   const { createUser } = useAuth();
+  const { user, createUser } = useAuth();
+  const [passMatch, setPassMatch] = useState(true);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location?.state?.from?.pathname || "/dashboard";
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+
+    if (password !== confirmPassword) {
+      setPassMatch(false);
+    }
+
+    console.log(name, email, password, confirmPassword);
+
+    if (password === confirmPassword) {
+      createUser(email, password).then((data) => {
+        if (data?.user?.email) {
+          const userInfo = {
+            name: name,
+            email: data?.user?.email,
+          };
+          fetch("http://localhost:5000/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userInfo),
+          })
+            .then((res) => res.json())
+            .then((data) => console.log(data));
+        }
+      });
+      if (user) {
+        navigate(from);
+      }
+    }
+  };
 
   return (
     <div
@@ -42,7 +83,7 @@ const Register = () => {
           <div className="w-full lg:w-1/2 px-12 py-12">
             <h1 className="text-3xl mb-2 font-bold">Register</h1>
             <p className="font-thin ">Streamline Your Inventory - Join Today</p>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="form-control w-full">
                 <label className="label">
                   <span className="label-text font-semibold">Name</span>
@@ -51,6 +92,7 @@ const Register = () => {
                   type="text"
                   placeholder="Name"
                   name="name"
+                  required
                   className="input input-bordered w-full"
                 />
               </div>
@@ -62,6 +104,7 @@ const Register = () => {
                   type="email"
                   placeholder="Email"
                   name="email"
+                  required
                   className="input input-bordered w-full"
                 />
               </div>
@@ -73,6 +116,7 @@ const Register = () => {
                   type="password"
                   placeholder="Password"
                   name="password"
+                  required
                   className="input input-bordered w-full"
                 />
               </div>
@@ -85,10 +129,18 @@ const Register = () => {
                 <input
                   type="password"
                   placeholder="Confirm Password"
+                  required
                   className="input input-bordered w-full"
                   name="confirmPassword"
                 />
               </div>
+              {!passMatch && (
+                <div className="my-2">
+                  <p className="text-red-500 font-semibold">
+                    Password do not match!
+                  </p>
+                </div>
+              )}
               <div className="label font-semibold">
                 Already Have an Account?
                 <Link className="font-bold" to="/">
@@ -96,9 +148,11 @@ const Register = () => {
                 </Link>
               </div>
               <div className="mt-2">
-                <button className="btn w-full bg-gradient-to-r from-gray-700 via-gray-900 to-black rounded-md text-white text-center font-semibold">
-                  Register
-                </button>
+                <input
+                className="btn w-full bg-gradient-to-r from-gray-700 via-gray-900 to-black rounded-md text-white text-center font-semibold"
+                type="submit"
+                value="Register"
+                />
               </div>
               <div className="divider mt-3 mb-3 font-semibold">OR</div>
             </form>

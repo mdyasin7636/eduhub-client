@@ -4,6 +4,7 @@ import Register from "../pages/Register";
 import ErrorPage from "../pages/ErrorPage";
 import MainLayout from "../Layouts/MainLayout";
 import DashboardLayout from "../Layouts/DashboardLayout";
+import Dashboard from "../pages/Dashboard";
 
 export const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: ""
+        element: <Dashboard/>
       }
     ]
   }
